@@ -27,10 +27,13 @@
         function initializeEditor() {
             simplemde = new SimpleMDE({
                 element: document.getElementById("markdown-editor"),
-                toolbar: ["bold", "italic", "heading", "|", "preview"]
-                insertTexts: {
-                    italic: ["_", "_"]
-                }
+                toolbar: ["bold", "italic", "heading", "|", "preview", "guide"],
+                indentWithTabs: false,
+                tabSize: 4,
+                blockStyles: {
+            		bold: "**",
+            		italic: "_"
+            	}
             });
 
             // Load text from the server when the page loads
