@@ -40,6 +40,7 @@
         // Function to save text to the server
         function saveText() {
             var text = simplemde.value();
+            lastServerText = text;
             var xhr = new XMLHttpRequest();
             xhr.open("POST", "save.php", true);
             xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
