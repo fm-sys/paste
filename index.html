@@ -20,11 +20,22 @@
     <!-- Include SimpleMDE JavaScript -->
     <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
     <script>
+        var simplemde;
+        var lastServerText = '';
+
         // Initialize SimpleMDE
-        var simplemde = new SimpleMDE({
-            element: document.getElementById("markdown-editor"),
-            toolbar: ["bold", "italic", "heading", "|", "preview"]
-        });
+        function initializeEditor() {
+            simplemde = new SimpleMDE({
+                element: document.getElementById("markdown-editor"),
+                toolbar: ["bold", "italic", "heading", "|", "preview"]
+            });
+
+            // Load text from the server when the page loads
+            loadTextFromServer();
+
+            // Check for updates every 5 seconds
+            setInterval(checkForUpdates, 5000);
+        }
 
         // Function to save text to the server
         function saveText() {
@@ -40,24 +51,41 @@
             xhr.send("text=" + encodeURIComponent(text));
         }
 
-        // Load text from the server when the page loads
-        window.onload = function() {
+        // Load text from the server
+        function loadTextFromServer() {
             var xhr = new XMLHttpRequest();
             xhr.open("GET", "load.php", true);
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === 4 && xhr.status === 200) {
-                    simplemde.value(xhr.responseText);
+                    var newText = xhr.responseText;
+                    if (newText !== lastServerText) {
+                        simplemde.value(newText);
+                        lastServerText = newText;
+                    }
                 }
             };
             xhr.send();
         }
 
+        // Check for updates from the server
+        function checkForUpdates() {
+            loadTextFromServer();
+        }
+
         // Save text to the server when user stops typing (debouncing to prevent frequent saves)
         var debounceTimer;
-        simplemde.codemirror.on("change", function() {
+        function handleTextChange() {
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(saveText, 1000);
-        });
+        }
+
+        // Initialize the editor when the page loads
+        window.onload = function() {
+            initializeEditor();
+
+            // Attach event listener for text changes
+            simplemde.codemirror.on("change", handleTextChange);
+        };
     </script>
 </body>
 </html>
