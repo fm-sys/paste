@@ -28,6 +28,9 @@
             simplemde = new SimpleMDE({
                 element: document.getElementById("markdown-editor"),
                 toolbar: ["bold", "italic", "heading", "|", "preview"]
+                insertTexts: {
+                    italic: ["_", "_"]
+                }
             });
 
             // Load text from the server when the page loads
